@@ -17,3 +17,42 @@
 - Can not combine multiple futures.
 
 ## CompletableFuture methods
+- Creating new instance:
+```java
+CompletableFuture<String> future = new CompletableFuture<String>();
+```
+- **supplyAsync():** 
+  - It completes it's job asynchronously. The result of supplier is run by a task from `FrokJoinPool.commonPool()` as default.
+  - The `supplyAsync()` method returns `CompletableFuture` on which we can apply other methods.
+- **thenApply():**
+  - This method accepts function as an arguments and returns a new `CompletableStage` when this stage completes normally.
+  - The new stage use as the argument to the supplied function.
+- **join():**
+  - This method returns the result value when complete. It also throws a `CompletionException` (unchecked exception) if completed exceptionally.
+
+```java
+import java.util.Arrays;  
+import java.util.List;  
+import java.util.concurrent.CompletableFuture;  
+public class CompletableFutureExample1 {  
+public static void main(String[] args) {  
+try {  
+List<Integer> list = Arrays.asList(5,9,14);  
+list.stream()
+.map(num -> CompletableFuture.supplyAsync(()-> getNumber(num)))
+.map(CompletableFuture->CompletableFuture.thenApply(n -> n*n))
+.map(t -> t.join()).forEach(s -> System.out.println(s));  
+} catch (Exception e) {  
+e.printStackTrace();  
+}  
+    }  
+private static int getNumber(int a) {  
+return a*a;  
+}  
+}  
+
+Output:
+625
+6561
+38416
+```
